@@ -22,15 +22,18 @@
 
 #define LOG_ERR "<libco:log:error> "
 
-int log_level = 1;
-
+static int log_level = 1;
 static int log_fd = -1;
 static char *log = "libco.log";
 static char logbuf[4096];
+static int log_flags = O_WRONLY | O_APPEND | O_CREAT;
+static mode_t log_mode = S_IRUSR | S_IWUSR; 
 
-int log_flags = O_WRONLY | O_APPEND | O_CREAT;
-mode_t log_mode = S_IRUSR | S_IWUSR; 
-
+static char *log_color[] = {
+    "\x1b[31m", // COLOR_RED
+    "\x1b[33m", // COLOR_YELLOW
+    "\x1b[34m"  // COLOR_BLUE
+};
 
 /* 
 * libco_log_out:
@@ -58,7 +61,7 @@ int libco_log_out(int level, const char *format, ...)
     logbuf[len] = '\0';
 
     if (level <= log_level)
-        printf(logbuf);
+        printf("%s%s", log_color[level], logbuf);
 
     
     /* 
