@@ -4,22 +4,23 @@
 #
 # github : nimisolo
 #
-# Last modified: 2016-06-10 20:53
+# Last modified: 2016-06-10 21:36
 #
-# Filename: libco.h
+# Filename: config.h
 #
 # Description: 
 #
 =============================================================================*/
-#ifndef __LIBCO_H
-#define __LIBCO_H
+#ifndef __LIBCO_CONFIG_H
+#define __LIBCO_CONFIG_H
 
 #include <stdio.h>
-#define _XOPEN_SOURCE
-#include <ucontext.h>
 
-typedef void (*co_fn)(void *param);
-typedef void* co_param;
+/*
+* log subsys related
+*/
+extern int config_log_level;
+extern char *config_log_file;
 
 #endif
 

@@ -12,6 +12,7 @@
 #
 =============================================================================*/
 #include "log.h"
+#include "config.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -22,9 +23,7 @@
 
 #define LOG_ERR "<libco:log:error> "
 
-static int log_level = 1;
 static int log_fd = -1;
-static char *log = "libco.log";
 static char logbuf[4096];
 static int log_flags = O_WRONLY | O_APPEND | O_CREAT;
 static mode_t log_mode = S_IRUSR | S_IWUSR; 
@@ -60,7 +59,7 @@ int libco_log_out(int level, const char *format, ...)
     logbuf[len++] = '\n';
     logbuf[len] = '\0';
 
-    if (level <= log_level)
+    if (level <= config_log_level)
         printf("%s%s", log_color[level], logbuf);
 
     
@@ -85,10 +84,11 @@ int libco_log_out(int level, const char *format, ...)
 * return 0.
 * @level is the maximal level would display on console, default is 1.
 */ 
-int libco_log_start(int enable, int level)
+int libco_log_start()
 {
-    if (enable <= 0) {
-        log_level = 2;
+    // disable log
+    if (config_log_enable <= 0) {
+        config_log_level = -1;
         return 0;
     }
 
@@ -98,9 +98,6 @@ int libco_log_start(int enable, int level)
         return -1; 
     }
 
-    if (0 <= level && level <= 2)
-        log_level = level;
-   
     return 0;
 }
 
@@ -110,12 +107,12 @@ int libco_log_start(int enable, int level)
 * Disable libco's log system. 
 * This will delete log file if @del is positive. 
 */ 
-void libco_log_end(int del)
+void libco_log_end()
 {
     if (-1 == close(log_fd))   
         printf(LOG_ERR"%s: %s\n", __func__, strerror(errno));
     
-    if (del > 0)
+    if (config_log_del > 0)
         remove(log);    
 }
 
